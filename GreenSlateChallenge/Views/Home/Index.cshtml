@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "GreenSlate Bryan Gonzalez test";
+}
+
+<div class="text-center">
+    <div class="col-xs-offset-3 col-xs-6 col-md-offset-4 col-md-4">
+        <p>
+            <select class="form-control centered" id="sltUsers" onchange="getProjects(this.value)">
+                <option selected="selected">--</option>
+                @foreach (var user in ViewBag.Users)
+                {
+                    <option value="@user.Id">@(user.FirstName + " " + user.LastName)</option>
+                }
+            </select>
+        </p>
+    </div>
+</div>
+   
+<div >
+    <table id="tblProjects" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Project Id</th>
+                <th>Start Date</th>
+                <th>Time To Start</th>
+                <th>End Date</th>
+                <th>Credits</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function getProjects(userId) {
+        $('#tblProjects > tbody').empty();
+        if (userId >= 0) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetProjects","Home")',
+                data: { userId: userId },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    debugger;
+                    jQuery.each(data, function (index, project) {
+                        var rows = "<tr>" +
+                                        "<td>" + project.Id + "</td>" +
+                                        "<td>" + project.StartDate + "</td>" +
+                                        "<td>" + project.TimeToStart + "</td>" +
+                                        "<td>" + project.EndDate + "</td>" +
+                                        "<td>" + project.Credits + "</td>" +
+                                        "<td>" + project.Status + "</td>" +
+                                   "</tr>";
+                        $('#tblProjects tbody').append(rows);
+                    });
+                },
+                error: function (response) {
+                    alert("Error while retriving the projects for this user");
+                }
+            });
+        }
+    }
+</script>
